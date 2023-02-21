@@ -7,7 +7,7 @@
 
 var global = global || globalThis || (function () { return this; }());
 
-let UnityEngine_Debug = puerts.loadType('UnityEngine.Debug');
+let UnityEngine_Debug = puer.loadType('UnityEngine.Debug');
 
 if (UnityEngine_Debug) {
     const console_org = global.console;
@@ -16,7 +16,7 @@ if (UnityEngine_Debug) {
     function toString(args) {
         return Array.prototype.map.call(args, x => {
             try {
-                return x+'';
+                return x instanceof Error ? x.stack : x + '';
             } catch (err) {
                 return err;
             }
@@ -64,7 +64,21 @@ if (UnityEngine_Debug) {
         else
             UnityEngine_Debug.Assert(false, "Assertion failed: console.assert\n" + getStack(new Error()) + "\n");
     }
+
+    const timeRecorder = new Map();
+    console.time = function(name){
+        timeRecorder.set(name,+new Date);
+    }
+    console.timeEnd = function(name){
+        const startTime = timeRecorder.get(name);
+        if(startTime){
+            console.log(String(name)+": "+(+new Date - startTime)+" ms");
+            timeRecorder.delete(name);
+        }else{
+            console.warn("Timer '" + String(name)+ "' does not exist");
+        };
+    }
     
     global.console = console;
-    puerts.console = console;
+    puer.console = console;
 }

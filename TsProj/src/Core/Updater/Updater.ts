@@ -4,7 +4,7 @@ import { Time } from "../Common/Time";
 import { UpdateManager } from "./UpdateManager";
 
 
-export class Updater extends Singleton<Updater> {
+class Updater extends Singleton<Updater> {
     csUpdater:JsUpdater | undefined ;
     updateMgr:UpdateManager;
     constructor() {
@@ -40,8 +40,14 @@ export class Updater extends Singleton<Updater> {
         console.log('onDestroy...');
     }
 
+    init(bindTo: JsUpdater) {
+        Updater.Instance(Updater).bindUpdater(bindTo);
+    }
+
 }
 
-exports.init = function(bindTo: JsUpdater) {
+function init(bindTo: JsUpdater) {
     Updater.Instance(Updater).bindUpdater(bindTo);
 }
+
+export{Updater,init};

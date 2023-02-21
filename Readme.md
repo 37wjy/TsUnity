@@ -1,6 +1,8 @@
 typescript 代码存于 [TsProj](TsProj), 目录下src为开发用代码
 
-编译ts需在该目录下运行 npm run build
+环境预备 `npm install -g typescript`
+
+编译ts需在该目录下运行 `npm run build`
 
 demo实现update下cube移动
 

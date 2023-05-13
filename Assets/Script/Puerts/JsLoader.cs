@@ -27,7 +27,7 @@ public class JsLoader : ILoader
         var puertsDir = Path.Combine(Application.dataPath, "ScriptTs");
         var jsPath = Path.Combine(puertsDir, filepath);
 
-        Debug.Log("load "+jsPath);
+        // Debug.Log("load "+jsPath);
         var txt = File.ReadAllText(jsPath);
         debugpath = jsPath.Replace("/", "\\");
 

@@ -2,6 +2,7 @@ import { UnityEngine } from "csharp";
 import { Time } from "../Core/Common/Time";
 import { Timer } from "../Core/Updater/Timer";
 import { Updatable } from "../Core/Updater/Updatable";
+import "../Core/Updater/CoroutineManager"
 
 const Vector3 = UnityEngine.Vector3;
 const Quaternion = UnityEngine.Quaternion;
@@ -9,6 +10,8 @@ const Quaternion = UnityEngine.Quaternion;
 UnityEngine.Debug.Log('hello world');
 
 var go = UnityEngine.GameObject.Find('Cube');
+
+var flag = true;
 
 export class Example extends Updatable {
 
@@ -44,6 +47,8 @@ const example = new Example();
 
 export class Example2 extends Updatable {
 
+    public flag = true;
+    
     constructor() {
         super();
         console.log('init example main');
@@ -62,10 +67,19 @@ export class Example2 extends Updatable {
     static async sec15() {
         for (let index = 0; index < 10; index++) {
             await Timer.sleep(1500);
-            console.log("sleep 1.5sec");
+            flag = false;
+            console.log(">>>>>> sleep 1.5sec");
         }
     }
+
+    static async coTest(){
+        await WaitWhile(()=>{
+            return flag;
+        })
+        console.log(">>>>> co test fine");
+    }
 }
-new Example2();
+//new Example2();
 //Example.sec1();
+Example2.coTest();
 Example2.sec15();

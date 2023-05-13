@@ -6,7 +6,7 @@ typescript 代码存于 [TsProj](TsProj), 目录下src为开发用代码
 
 demo实现update下cube移动
 
-目前仅实现mono behavior的update系列绑定 timer系列未实现 
+目前仅实现mono behavior的update系列绑定 timer系列未实现
 
 [Assets/Script](Assets/Script) 为c#目录
 

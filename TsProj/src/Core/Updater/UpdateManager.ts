@@ -2,15 +2,21 @@ import { JsUpdater } from "csharp";
 import { List } from "../Common/List";
 import { Singleton } from "../Common/Singleton";
 
+
+
 class _event { // 看看能不能用原本的eventlister。。
+
     public name: string;
     private lock: boolean;
+    private add_list: List<Function>;
     private op_list: List<Function>;
     private event_list: List<Function>;
+
     constructor(name: string) {
         this.name = name;
         this.lock = false;
         this.op_list = new List<Function>();
+        this.add_list = new List<Function>();
         this.event_list = new List<Function>();
     }
 
@@ -21,25 +27,27 @@ class _event { // 看看能不能用原本的eventlister。。
         });
         this.lock = false;
 
-        this.op_list.forEach(f => {f();});
+        this.event_list.append(this.add_list);
+        this.op_list.forEach(f => { f(); });
+        this.add_list.clear();
         this.op_list.clear();
     }
 
     public addListener(listener: Function) {
         console.log("add listener ");
         if (this.lock) {
-            this.op_list.add(()=>{this.event_list.push(listener)});
+            this.add_list.add(listener);
         }
-        else{
+        else {
             this.event_list.push(listener);
         }
     }
 
     public removeListener(listener: Function) {
         if (this.lock) {
-            this.op_list.add(()=>{this.event_list.remove(listener);});
+            this.op_list.add(() => { this.event_list.remove(listener); });
         }
-        else{
+        else {
             this.event_list.remove(listener);
         }
     }
@@ -56,10 +64,12 @@ class _event { // 看看能不能用原本的eventlister。。
 
 
 export class UpdateManager extends Singleton<UpdateManager> {
+
     csUpdater: JsUpdater | undefined;
     private updateEvent: _event;
     private lateUpdateEvent: _event;
     private fixedUpdateEvent: _event;
+
     constructor() {
         super();
         this.updateEvent = new _event("update");
@@ -82,9 +92,11 @@ export class UpdateManager extends Singleton<UpdateManager> {
     addUpdate(listener: Function) {
         this.updateEvent.addListener(listener);
     }
+
     addFixedUpdate(listener: Function) {
         this.fixedUpdateEvent.addListener(listener);
     }
+
     addLateUpdate(listener: Function) {
         this.lateUpdateEvent.addListener(listener);
     }

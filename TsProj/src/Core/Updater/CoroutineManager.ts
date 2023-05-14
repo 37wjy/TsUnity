@@ -9,11 +9,13 @@ class CoWrap {
 
     private func: Function;
     private resolv: Function;
+    private reject: Function;
     public name: string;
 
-    constructor(resolve: Function, func: Function, name: string) {
+    constructor(resolve: Function, reject:Function , func: Function, name: string) {
         this.func = func;
         this.resolv = resolve;
+        this.reject = reject;
         this.name = name;
     }
 
@@ -24,6 +26,14 @@ class CoWrap {
     public Complete() {
         this.resolv();
     }
+
+    public Faild(){
+        this.reject();
+    }
+}
+
+function coCatch() {
+    
 }
 
 
@@ -51,6 +61,10 @@ class CoroutineManager extends Singleton<CoroutineManager> {
                 co.Complete();
                 com.co_remove_list.push(co);
             }
+            else {
+                co.Faild();
+                com.co_remove_list.push(co);
+            } 
         })
         com.co_remove_list.forEach((co) => {
             com.co_update_list.remove(co);
@@ -58,15 +72,18 @@ class CoroutineManager extends Singleton<CoroutineManager> {
         com.co_remove_list.clear();
     }
 
-    private appendUpdate(resolve: Function, condition: Function, name: string) {
-        var tmp = new CoWrap(resolve, condition, name);
+    private appendUpdate(resolve: Function, reject:Function, condition: Function, name: string) {
+        var tmp = new CoWrap(resolve, reject, condition, name);
         this.co_update_list.add(tmp);
     }
 
     public WaitWhile(condition: Function) {
-        var p = new Promise((resolve) => {
-            this.appendUpdate(resolve, () => { return condition() != true; }, "test");
+        var resolve;
+        var rej;
+        var p = new Promise((resolve, rejected) => {
+            this.appendUpdate(resolve, rejected, () => { return condition() != true; }, "test");
         });
+        p.then(null,coCatch);
         return p;
     }
 
